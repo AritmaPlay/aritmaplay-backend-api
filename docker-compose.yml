@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    image: app-laravel
+    container_name: app-laravel
+    restart: always
+    expose:
+      - 8081
+    ports:
+      - 8081:80
+      - 443:443
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    name: app_network
