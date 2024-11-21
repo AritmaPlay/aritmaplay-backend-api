@@ -16,7 +16,7 @@ COPY . /var/www/html/app
 #Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 #Download Vendor to dir app
-RUN cd /var/www/html/app && composer install && php artisan key:generate
+RUN cd /var/www/html/app && composer install
 #Permission
 RUN chmod -R 777 /var/www/html/app/storage
 #Remove apache-config folder
