@@ -15,6 +15,7 @@ class RegisterController extends Controller
     public function __invoke(Request $request)
     {
         $rules =[
+            'name' => 'required|string',
             'username' => 'required|string|unique:users',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string',
@@ -31,6 +32,7 @@ class RegisterController extends Controller
         }
     
         $user = User::create([
+            'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'password' => bcrypt($request->password),
