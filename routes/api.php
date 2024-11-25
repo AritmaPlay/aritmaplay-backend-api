@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Quiz\QuizController;
 
 Route::get('/user', [UserController::class, 'index'])->middleware('auth:sanctum');
 Route::get('/user/{id}', [UserController::class, 'show'])->middleware('auth:sanctum');
@@ -24,3 +25,8 @@ Route::get('/' , function (){
 Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
 Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
+
+//quiz
+Route::get('/quiz', [QuizController::class, 'index'])->middleware('auth:sanctum');
+Route::get('/quiz/{id}', [QuizController::class, 'show'])->middleware('auth:sanctum');
+Route::post('/quiz/create', [QuizController::class, 'store'])->middleware('auth:sanctum');
