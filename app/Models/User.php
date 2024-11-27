@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Quiz::class, 'user_id', 'user_id');
     }
+
+    public function leaderboardEntries()
+    {
+        return $this->hasMany(LeaderboardEntry::class, 'user_id', 'user_id');
+    }
 }

@@ -14,4 +14,9 @@ class Leaderboard extends Model
         'end_date', 
         'status'
     ];
+
+    public function leaderboardEntries()
+    {
+        return $this->hasMany(LeaderboardEntry::class, 'leaderboard_id', 'leaderboard_id');
+    }
 }
