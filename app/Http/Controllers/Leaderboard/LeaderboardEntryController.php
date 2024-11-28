@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Leaderboard;
 
 use Exception;
+use App\Models\User;
+use App\Models\Leaderboard;
 use Illuminate\Http\Request;
 use App\Models\LeaderboardEntry;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class LeaderboardEntryController extends Controller
@@ -45,7 +48,7 @@ class LeaderboardEntryController extends Controller
             'success' => true,
             'message' => 'Leaderboard entry created successfully',
             'response_code' => 200,
-            'data' => $user
+            'data' => [$user]
         ]);
     }
 
@@ -57,7 +60,7 @@ class LeaderboardEntryController extends Controller
             'success' => true,
             'message' => 'Leaderboards entries retrieved successfully.',
             'response_code' => 200,
-            'data' => $leaderboardsEntries,
+            'data' => [$leaderboardsEntries],
         ], 200);
     }
 
@@ -78,7 +81,7 @@ class LeaderboardEntryController extends Controller
             'success' => true,
             'message' => 'Leaderboard entry retrieved successfully.',
             'response_code' => 200,
-            'data' => $leaderboardEntry,
+            'data' => [$leaderboardEntry],
         ], 200);
     }
 
@@ -107,7 +110,7 @@ class LeaderboardEntryController extends Controller
             'success' => true,
             'message' => 'Leaderboard updated successfully.',
             'response_code' => 200,
-            'data' => $leaderboardEntry,
+            'data' => [$leaderboardEntry],
         ], 200);
     } catch (Exception $e) {
         return response()->json([
@@ -117,5 +120,32 @@ class LeaderboardEntryController extends Controller
             'data' => $e->getMessage(),
         ], 404);
     }
+    }
+
+    public function test($exp_received) {
+        $user = Auth::user();
+        // 1. Ambil id leaderboard minggu ini (yang aktif)
+        $leaderboard_id = Leaderboard::where('status', 'active')->first()->leaderboard_id;
+        // 2. Cari leaderboard entry dengan user_id dan leaderboard_id tersebut
+        $leaderboardEntry = LeaderboardEntry::where('user_id', $user->user_id)->where('leaderboard_id', $leaderboard_id)->first();
+        // 3. Jika ada, update ranknya
+        if ($leaderboardEntry) {
+            $leaderboardEntry->totalExpPerWeek = $leaderboardEntry->totalExpPerWeek + $exp_received;
+            //Update rank dari leaderboard entry
+            //1. Get entry minggu ini urutkan totalExpPerWeek
+            $leaderboardEntries = LeaderboardEntry::where('leaderboard_id', $leaderboard_id)->orderBy('totalExpPerWeek', 'desc')->get();
+            $leaderboardEntry->rank = $leaderboardEntries->search($leaderboardEntry) + 1;
+            $leaderboardEntry->save();
+        }
+        // 4. Jika tidak ada, buat leaderboard entry baru
+        else {
+            LeaderboardEntry::create([
+                'leaderboard_id' => $leaderboard_id,
+                'user_id' => $user->user_id,
+                'totalExpPerWeek' => $user->totalExp,
+                'rank' => 1
+            ]);
+        }
+
     }
 }

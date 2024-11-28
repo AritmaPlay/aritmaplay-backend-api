@@ -43,8 +43,8 @@ class LeaderboardController extends Controller
             'success' => true,
             'message' => 'Leaderboard created successfully',
             'response_code' => 200,
-            'data' => $leaderboard
-        ]);
+            'data' => [$leaderboard],
+        ], 200);
     }
 
     public function index()
@@ -55,7 +55,7 @@ class LeaderboardController extends Controller
             'success' => true,
             'message' => 'Leaderboards retrieved successfully.',
             'response_code' => 200,
-            'data' => $leaderboards,
+            'data' => [$leaderboards],
         ], 200);
     }
 
@@ -76,7 +76,7 @@ class LeaderboardController extends Controller
             'success' => true,
             'message' => 'Leaderboard retrieved successfully.',
             'response_code' => 200,
-            'data' => $leaderboard,
+            'data' => [$leaderboard],
         ], 200);
     }
 
@@ -105,7 +105,7 @@ class LeaderboardController extends Controller
             'success' => true,
             'message' => 'Leaderboard updated successfully.',
             'response_code' => 200,
-            'data' => $leaderboard,
+            'data' => [$leaderboard],
         ], 200);
     } catch (Exception $e) {
         return response()->json([

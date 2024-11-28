@@ -6,6 +6,7 @@ use App\Models\Quiz;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\ExperienceController;
 
 class QuizController extends Controller
 {
@@ -33,7 +34,7 @@ class QuizController extends Controller
             ], 400);
         }
     
-        $user = Quiz::create([
+        $quiz = Quiz::create([
             'quiz_mode' => $request->quiz_mode,
             'exp_received' => $request->exp_received,
             'total_question' => $request->total_question,
@@ -41,13 +42,19 @@ class QuizController extends Controller
             'correct_question' => $request->correct_question,
             'user_id' => $request->user_id
         ]);
+
+        $experienceController = new ExperienceController();
+        $experienceResponse = $experienceController->updateUserExperience($quiz);
     
         return response()->json([
             'success' => true,
-            'message' => 'User registered successfully',
+            'message' => 'Quiz created successfully and user experience updated.',
             'response_code' => 200,
-            'data' => $user
-        ]);
+            'data' => [
+                'quiz' => $quiz,
+                'user_update' => json_decode($experienceResponse->getContent(), true)
+            ],
+        ], 200);
     }
 
     public function index()
@@ -58,7 +65,7 @@ class QuizController extends Controller
             'success' => true,
             'message' => 'Quizzes retrieved successfully.',
             'response_code' => 200,
-            'data' => $quizzes,
+            'data' =>[$quizzes],
         ], 200);
     }
 
@@ -79,7 +86,7 @@ class QuizController extends Controller
             'success' => true,
             'message' => 'Quiz retrieved successfully.',
             'response_code' => 200,
-            'data' => $quiz,
+            'data' => [$quiz],
         ], 200);
     }
 }

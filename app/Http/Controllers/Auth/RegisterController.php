@@ -42,7 +42,7 @@ class RegisterController extends Controller
             'success' => true,
             'message' => 'User registered successfully',
             'response_code' => 200,
-            'data' => $user
+            'data' => [$user]
         ]);
     }
 }
