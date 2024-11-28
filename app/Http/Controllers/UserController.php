@@ -40,7 +40,7 @@ class UserController extends Controller
             'success' => true,
             'message' => 'User retrieved successfully.',
             'response_code' => 200,
-            'data' => $user,
+            'data' => [$user],
         ], 200);
     }
 
@@ -71,7 +71,7 @@ class UserController extends Controller
             'success' => true,
             'message' => 'User updated successfully.',
             'response_code' => 200,
-            'data' => $user,
+            'data' => [$user],
         ], 200);
     } catch (Exception $e) {
         return response()->json([
