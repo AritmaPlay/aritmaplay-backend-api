@@ -10,8 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Leaderboard\LeaderboardController;
 use App\Http\Controllers\Leaderboard\LeaderboardEntryController;
 
-Route::get('/user', [UserController::class, 'index'])->middleware('auth:sanctum');
-Route::get('/user/{id}', [UserController::class, 'show'])->middleware('auth:sanctum');
+
 
 
 Route::get('/' , function (){
@@ -28,18 +27,14 @@ Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
 Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
 
+//user
+Route::resources(['user' => UserController::class], ['middleware' => 'auth:sanctum']);
+
 //quiz
-Route::get('/quiz', [QuizController::class, 'index'])->middleware('auth:sanctum');
-Route::get('/quiz/{id}', [QuizController::class, 'show'])->middleware('auth:sanctum');
-Route::post('/quiz', [QuizController::class, 'store'])->middleware('auth:sanctum');
+Route::resource('/quiz', QuizController::class)->middleware('auth:sanctum');
 
 //leaderboard
-Route::get('/leaderboard', [LeaderboardController::class, 'index'])->middleware('auth:sanctum');
-Route::get('/leaderboard/{id}', [LeaderboardController::class, 'show'])->middleware('auth:sanctum');
-Route::post('/leaderboard', [LeaderboardController::class, 'store'])->middleware('auth:sanctum');
-
+Route::resource('/leaderboard', LeaderboardController::class)->middleware('auth:sanctum');
 
 //leaderboardEntry
-Route::get('/leaderboard-entry', [LeaderboardEntryController::class, 'index'])->middleware('auth:sanctum');
-Route::get('/leaderboard-entry/{id}', [LeaderboardEntryController::class, 'show'])->middleware('auth:sanctum');
-Route::post('/leaderboard-entry', [LeaderboardEntryController::class, 'store'])->middleware('auth:sanctum');
+Route::resource('/leaderboard-entry', LeaderboardEntryController::class)->middleware('auth:sanctum');
