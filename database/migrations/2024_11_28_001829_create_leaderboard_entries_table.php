@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leaderboard_entries', function (Blueprint $table) {
-            $table->id('entry_id');
+            $table->id('entry_id')->primary();
             $table->unsignedBigInteger('leaderboard_id');
             $table->unsignedBigInteger('user_id');
             $table->integer('totalExpPerWeek');

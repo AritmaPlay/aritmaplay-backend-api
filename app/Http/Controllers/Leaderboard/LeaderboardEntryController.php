@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Leaderboard;
 
+use Exception;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\LeaderboardEntry;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class LeaderboardEntryController extends Controller
@@ -50,21 +51,21 @@ class LeaderboardEntryController extends Controller
 
     public function index()
     {
-        $leaderboards = LeaderboardEntry::all();
+        $leaderboardsEntries = LeaderboardEntry::all();
 
         return response()->json([
             'success' => true,
             'message' => 'Leaderboards entries retrieved successfully.',
             'response_code' => 200,
-            'data' => $leaderboards,
+            'data' => $leaderboardsEntries,
         ], 200);
     }
 
     public function show($id)
     {
-        $leaderboard = LeaderboardEntry::find($id);
+        $leaderboardEntry = LeaderboardEntry::find($id);
 
-        if (!$leaderboard) {
+        if (!$leaderboardEntry) {
             return response()->json([
                 'success' => false,
                 'message' => 'Leaderboard entry not found.',
@@ -75,9 +76,46 @@ class LeaderboardEntryController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'leaderboard entry retrieved successfully.',
+            'message' => 'Leaderboard entry retrieved successfully.',
             'response_code' => 200,
-            'data' => $leaderboard,
+            'data' => $leaderboardEntry,
         ], 200);
+    }
+
+    public function update(Request $request, $id)
+    {
+    try {
+        $leaderboardEntry = LeaderboardEntry::find($id);
+    
+        if (!$leaderboardEntry) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Leaderboard entry not found.',
+                'response_code' => 404,
+                'data' => [],
+            ], 404);
+        }
+
+        $validatedData = $request->validate([
+            'rank' => 'required|integer',
+        ]);
+
+        $leaderboardEntry->rank = $validatedData['rank'];
+        $leaderboardEntry->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Leaderboard updated successfully.',
+            'response_code' => 200,
+            'data' => $leaderboardEntry,
+        ], 200);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Leaderboard updated failed.',
+            'response_code' => 404,
+            'data' => $e->getMessage(),
+        ], 404);
+    }
     }
 }

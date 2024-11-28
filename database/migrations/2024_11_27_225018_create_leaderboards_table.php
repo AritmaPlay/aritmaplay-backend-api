@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leaderboards', function (Blueprint $table) {
-            $table->id('leaderboard_id');
+            $table->id('leaderboard_id')->primary();
             $table->string('name');
             $table->timestamp('start_date');
             $table->timestamp('end_date');
