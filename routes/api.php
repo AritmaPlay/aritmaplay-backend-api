@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Quiz\QuizController;
@@ -9,9 +10,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Leaderboard\LeaderboardController;
 use App\Http\Controllers\Leaderboard\LeaderboardEntryController;
-
-
-
+use App\Http\Middleware\VerifyCloudSchedulerToken;
 
 Route::get('/' , function (){
     return response()->json([
@@ -39,3 +38,14 @@ Route::get('/leaderboard-active', [LeaderboardController::class, 'showActiveLead
 
 //leaderboardEntry
 Route::resource('/leaderboard-entry', LeaderboardEntryController::class)->middleware('auth:sanctum');
+
+Route::post('/run-scheduled-task', function () {
+    // Logika atau fungsi yang dijalankan
+    app(LeaderboardController::class)->endLeaderboardWeek();
+    //panggil fungsi CreateLeaderboardWeek pada leaderboardcontroller
+    app(LeaderboardController::class)->createLeaderboardWeek();
+    Log::info('Scheduled task executed successfully.');
+
+    return response()->json(['message' => 'Scheduled task executed successfully.']);
+})->middleware(VerifyCloudSchedulerToken::class); // Middleware opsional untuk keamanan
+

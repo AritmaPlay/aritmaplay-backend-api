@@ -19,8 +19,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN cd /var/www/html/app && composer install
 #Permission
 RUN chmod -R 777 /var/www/html/app/storage
-#Remove apache-config folder
-# RUN cd /var/www/html/app && rm -R server-config/
 #Enable VHOST
 RUN a2dissite 000-default.conf
 RUN a2ensite app.conf
