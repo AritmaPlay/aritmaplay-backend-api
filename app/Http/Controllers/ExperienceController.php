@@ -25,7 +25,7 @@ class ExperienceController extends Controller
             }
 
             // Tambahkan exp_received ke totalExp user
-            $user->totalExp += $quiz->exp_received;
+            $user->totalExp = $user->totalExp + $quiz->exp_received;
 
             // Hitung level berdasarkan exp eksponensial
             $baseExp = 100; // Exp dasar untuk naik dari Level 1 ke Level 2
@@ -47,7 +47,7 @@ class ExperienceController extends Controller
 
             // Panggil fungsi test pada leaderboardEntryController
             $leaderboardEntryController = new LeaderboardEntryController();
-            $leaderboardEntryController->test($quiz->exp_received);
+            $leaderboardEntryController->addExpToLeaderboardEntry($quiz->exp_received);
             
             return response()->json([
                 'success' => true,

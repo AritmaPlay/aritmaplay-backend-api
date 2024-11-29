@@ -22,7 +22,6 @@ class LeaderboardEntryController extends Controller
             'leaderboard_id' => 'required|exists:leaderboards,leaderboard_id',
             'user_id' => 'required|exists:users,user_id',
             'totalExpPerWeek' => 'required|integer',
-            'rank' => 'required|integer',
             'last_updated' => 'nullable|date',
         ]; 
     
@@ -40,7 +39,6 @@ class LeaderboardEntryController extends Controller
             'leaderboard_id' => $request->leaderboard_id,
             'user_id' => $request->user_id,
             'totalExpPerWeek' => $request->totalExpPerWeek,
-            'rank' => $request->rank,
             'last_updated' => $request->last_updated,
         ]);
     
@@ -85,44 +83,44 @@ class LeaderboardEntryController extends Controller
         ], 200);
     }
 
-    public function update(Request $request, $id)
-    {
-    try {
-        $leaderboardEntry = LeaderboardEntry::find($id);
+    // public function update(Request $request, $id)
+    // {
+    // try {
+    //     $leaderboardEntry = LeaderboardEntry::find($id);
     
-        if (!$leaderboardEntry) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Leaderboard entry not found.',
-                'response_code' => 404,
-                'data' => [],
-            ], 404);
-        }
+    //     if (!$leaderboardEntry) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Leaderboard entry not found.',
+    //             'response_code' => 404,
+    //             'data' => [],
+    //         ], 404);
+    //     }
 
-        $validatedData = $request->validate([
-            'rank' => 'required|integer',
-        ]);
+    //     $validatedData = $request->validate([
+    //         'rank' => 'required|integer',
+    //     ]);
 
-        $leaderboardEntry->rank = $validatedData['rank'];
-        $leaderboardEntry->save();
+    //     $leaderboardEntry->rank = $validatedData['rank'];
+    //     $leaderboardEntry->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Leaderboard updated successfully.',
-            'response_code' => 200,
-            'data' => [$leaderboardEntry],
-        ], 200);
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Leaderboard updated failed.',
-            'response_code' => 404,
-            'data' => $e->getMessage(),
-        ], 404);
-    }
-    }
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Leaderboard updated successfully.',
+    //         'response_code' => 200,
+    //         'data' => [$leaderboardEntry],
+    //     ], 200);
+    // } catch (Exception $e) {
+    //     return response()->json([
+    //         'success' => false,
+    //         'message' => 'Leaderboard updated failed.',
+    //         'response_code' => 404,
+    //         'data' => $e->getMessage(),
+    //     ], 404);
+    // }
+    // }
 
-    public function test($exp_received) {
+    public function addExpToLeaderboardEntry($exp_received) {
         $user = Auth::user();
         // 1. Ambil id leaderboard minggu ini (yang aktif)
         $leaderboard_id = Leaderboard::where('status', 'active')->first()->leaderboard_id;
@@ -131,10 +129,6 @@ class LeaderboardEntryController extends Controller
         // 3. Jika ada, update ranknya
         if ($leaderboardEntry) {
             $leaderboardEntry->totalExpPerWeek = $leaderboardEntry->totalExpPerWeek + $exp_received;
-            //Update rank dari leaderboard entry
-            //1. Get entry minggu ini urutkan totalExpPerWeek
-            $leaderboardEntries = LeaderboardEntry::where('leaderboard_id', $leaderboard_id)->orderBy('totalExpPerWeek', 'desc')->get();
-            $leaderboardEntry->rank = $leaderboardEntries->search($leaderboardEntry) + 1;
             $leaderboardEntry->save();
         }
         // 4. Jika tidak ada, buat leaderboard entry baru
@@ -143,9 +137,7 @@ class LeaderboardEntryController extends Controller
                 'leaderboard_id' => $leaderboard_id,
                 'user_id' => $user->user_id,
                 'totalExpPerWeek' => $user->totalExp,
-                'rank' => 1
             ]);
-        }
-
     }
+}
 }

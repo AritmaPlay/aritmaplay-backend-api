@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Quiz;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\ExperienceController;
 
@@ -21,7 +22,6 @@ class QuizController extends Controller
             'total_question' => 'required|integer',
             'quiz_time' => 'required|integer',
             'correct_question' => 'required|integer',
-            'user_id' => 'required|exists:users,user_id',
         ]; 
     
         $validator = Validator::make($request->all(), $rules);
@@ -33,14 +33,14 @@ class QuizController extends Controller
                 'data' => $validator->errors(),
             ], 400);
         }
-    
+        $user = Auth::user();
         $quiz = Quiz::create([
             'quiz_mode' => $request->quiz_mode,
             'exp_received' => $request->exp_received,
             'total_question' => $request->total_question,
             'quiz_time' => $request->quiz_time,
             'correct_question' => $request->correct_question,
-            'user_id' => $request->user_id
+            'user_id' => $user->user_id
         ]);
 
         $experienceController = new ExperienceController();
