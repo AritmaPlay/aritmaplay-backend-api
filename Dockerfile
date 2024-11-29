@@ -19,12 +19,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN cd /var/www/html/app && composer install
 #Permission
 RUN chmod -R 777 /var/www/html/app/storage
+# Make the file executable, or use "chmod 777" instead of "chmod +x"
+RUN chmod +x /var/www/html/app/db-migration.sh
 #Enable VHOST
 RUN a2dissite 000-default.conf
 RUN a2ensite app.conf
-
-# Make the file executable, or use "chmod 777" instead of "chmod +x"
-RUN chmod +x /var/www/html/app/db-migration.sh
-
 # This will run the shell file at the time when container is up-and-running successfully (and NOT at the BUILD time)
-ENTRYPOINT ["/var/www/html/db-migration.sh"]
+ENTRYPOINT ["/var/www/html/app/db-migration.sh"]
