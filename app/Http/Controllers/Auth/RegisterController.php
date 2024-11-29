@@ -15,7 +15,7 @@ class RegisterController extends Controller
     public function __invoke(Request $request)
     {
         $rules =[
-            'name' => 'required|string',
+            'name' => 'required|string|max:255',
             'username' => 'required|string|unique:users',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string',
@@ -42,7 +42,7 @@ class RegisterController extends Controller
             'success' => true,
             'message' => 'User registered successfully',
             'response_code' => 200,
-            'data' => $user
+            'data' => [$user]
         ]);
     }
 }
