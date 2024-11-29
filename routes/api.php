@@ -35,6 +35,7 @@ Route::resource('/quiz', QuizController::class)->middleware('auth:sanctum');
 
 //leaderboard
 Route::resource('/leaderboard', LeaderboardController::class)->middleware('auth:sanctum');
+Route::get('/leaderboard-active', [LeaderboardController::class, 'showActiveLeaderboard'])->middleware('auth:sanctum');
 
 //leaderboardEntry
 Route::resource('/leaderboard-entry', LeaderboardEntryController::class)->middleware('auth:sanctum');

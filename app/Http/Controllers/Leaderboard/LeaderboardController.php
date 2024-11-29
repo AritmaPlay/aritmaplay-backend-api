@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Leaderboard;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Leaderboard;
 use Exception;
+use App\Models\Leaderboard;
+use Illuminate\Http\Request;
+use App\Models\LeaderboardEntry;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Termwind\Components\Dd;
 
 class LeaderboardController extends Controller
 {
@@ -117,4 +119,53 @@ class LeaderboardController extends Controller
     }
     }
 
+    public function showActiveLeaderboard()
+    {
+        
+        //1. Ambil id leaderboard minggu ini (yang aktif)
+        $leaderboard = Leaderboard::where('status', 'active')->get()->first();
+        //2. Cari leaderboard entry dengan leaderboard tersebut
+        $entries = LeaderboardEntry::where('leaderboard_id', $leaderboard->leaderboard_id)->orderBy('totalExpPerWeek', 'desc')->limit(10)->get();
+        
+        if (!$leaderboard) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Leaderboard not found.',
+                'response_code' => 404,
+                'data' => [],
+            ], 404);
+        }
+        if (!$entries) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Leaderboard entry not found.',
+                'response_code' => 404,
+                'data' => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Leaderboard retrieved successfully.',
+            'response_code' => 200,
+            'data' => ['leaderboard'=>$leaderboard, 'entries'=>$entries],
+        ], 200);
+    }
+
+    public function createLeaderboardWeek()
+    {
+        $leaderboard = Leaderboard::create([
+            'name' => 'Leaderboard Mingguan',
+            'start_date' => now(),
+            'end_date' => now()->addWeek(),
+            'status' => 'active',
+        ]);
+    }
+
+    public function endLeaderboardWeek()
+    {
+        $leaderboard = Leaderboard::where('status', 'active')->first();
+        $leaderboard->status = 'inactive';
+        $leaderboard->save();
+    }
 }
