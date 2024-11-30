@@ -83,43 +83,6 @@ class LeaderboardEntryController extends Controller
         ], 200);
     }
 
-    // public function update(Request $request, $id)
-    // {
-    // try {
-    //     $leaderboardEntry = LeaderboardEntry::find($id);
-    
-    //     if (!$leaderboardEntry) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Leaderboard entry not found.',
-    //             'response_code' => 404,
-    //             'data' => [],
-    //         ], 404);
-    //     }
-
-    //     $validatedData = $request->validate([
-    //         'rank' => 'required|integer',
-    //     ]);
-
-    //     $leaderboardEntry->rank = $validatedData['rank'];
-    //     $leaderboardEntry->save();
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Leaderboard updated successfully.',
-    //         'response_code' => 200,
-    //         'data' => [$leaderboardEntry],
-    //     ], 200);
-    // } catch (Exception $e) {
-    //     return response()->json([
-    //         'success' => false,
-    //         'message' => 'Leaderboard updated failed.',
-    //         'response_code' => 404,
-    //         'data' => $e->getMessage(),
-    //     ], 404);
-    // }
-    // }
-
     public function addExpToLeaderboardEntry($exp_received) {
         $user = Auth::user();
         // 1. Ambil id leaderboard minggu ini (yang aktif)

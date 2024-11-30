@@ -9,7 +9,10 @@ class LeaderboardEntry extends Model
     protected $primaryKey = 'entry_id';
 
     protected $fillable = [
-        'leaderboard_id', 'user_id', 'totalExpPerWeek', 'rank', 'last_updated'
+        'leaderboard_id', 
+        'user_id', 
+        'totalExpPerWeek',
+        'last_updated'
     ];
 
     public function user()
