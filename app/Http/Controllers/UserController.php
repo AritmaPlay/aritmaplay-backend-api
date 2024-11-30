@@ -20,7 +20,7 @@ class UserController extends Controller
             'success' => true,
             'message' => 'Users retrieved successfully.',
             'response_code' => 200,
-            'data' => $users,
+            'data' => [$users],
         ], 200);
     }
     public function show($id)

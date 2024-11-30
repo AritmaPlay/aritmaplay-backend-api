@@ -56,7 +56,7 @@ class LoginController extends Controller
             'message' => 'Login successfully',
             'response_code' => 200,
             'data' => [ 'user' => $user,
-                        'token' => $token],
+                        'token' => $token,],
         ], 200);
     }
 }

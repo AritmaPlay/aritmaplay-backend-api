@@ -57,7 +57,7 @@ class LeaderboardController extends Controller
             'success' => true,
             'message' => 'Leaderboards retrieved successfully.',
             'response_code' => 200,
-            'data' => [$leaderboards],
+            'data' => $leaderboards,
         ], 200);
     }
 
@@ -78,7 +78,7 @@ class LeaderboardController extends Controller
             'success' => true,
             'message' => 'Leaderboard retrieved successfully.',
             'response_code' => 200,
-            'data' => [$leaderboard],
+            'data' => $leaderboard,
         ], 200);
     }
 
@@ -121,10 +121,7 @@ class LeaderboardController extends Controller
 
     public function showActiveLeaderboard()
     {
-        
-        //1. Ambil id leaderboard minggu ini (yang aktif)
         $leaderboard = Leaderboard::where('status', 'active')->get()->first();
-        //2. Cari leaderboard entry dengan leaderboard tersebut
         $entries = LeaderboardEntry::where('leaderboard_id', $leaderboard->leaderboard_id)->orderBy('totalExpPerWeek', 'desc')->limit(10)->get();
         
         if (!$leaderboard) {
@@ -148,7 +145,8 @@ class LeaderboardController extends Controller
             'success' => true,
             'message' => 'Leaderboard retrieved successfully.',
             'response_code' => 200,
-            'data' => ['leaderboard'=>$leaderboard, 'entries'=>$entries],
+            'data' => [['leaderboard'=>[$leaderboard], 
+                        'entries'=>$entries]],
         ], 200);
     }
 

@@ -51,8 +51,8 @@ class QuizController extends Controller
             'message' => 'Quiz created successfully and user experience updated.',
             'response_code' => 200,
             'data' => [
-                'quiz' => $quiz,
-                'user_update' => json_decode($experienceResponse->getContent(), true)
+                'quiz' => [$quiz],
+                'user_update' => [json_decode($experienceResponse->getContent(), true)]
             ],
         ], 200);
     }

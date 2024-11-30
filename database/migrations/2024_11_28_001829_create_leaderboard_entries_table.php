@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('leaderboard_id');
             $table->unsignedBigInteger('user_id');
             $table->integer('totalExpPerWeek');
-            $table->integer('rank');
             $table->timestamp('last_updated')->nullable();
             $table->timestamps();
         
