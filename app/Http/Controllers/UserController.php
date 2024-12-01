@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -40,7 +42,8 @@ class UserController extends Controller
             'success' => true,
             'message' => 'User retrieved successfully.',
             'response_code' => 200,
-            'data' => [$user],
+            'data' => ['user' => $user, 
+                        'stats' => $this->getStats($user->user_id)],
         ], 200);
     }
 
@@ -81,5 +84,55 @@ class UserController extends Controller
             'data' => $e->getMessage(),
         ], 404);
     }
+    }
+
+    public function getStats($id){
+        $user = User::find($id);
+        $quizDone = Quiz::where('user_id', $user->user_id)->count();
+        $quizTambahSuccesRate = Quiz::select('user_id')
+        ->selectRaw('SUM(correct_question) as total')
+        ->selectRaw('COUNT(*) as total_quiz')
+        ->where('quiz_mode', 'tambah')
+        ->where('user_id', $user->user_id)
+        ->groupBy('user_id')
+        ->get();
+        $quizTambahSuccesRate = $quizTambahSuccesRate[0]->total  / ($quizTambahSuccesRate[0]->total_quiz * 10) * 100 ;
+        $quizKurangSuccesRate = Quiz::select('user_id')
+        ->selectRaw('SUM(correct_question) as total')
+        ->selectRaw('COUNT(*) as total_quiz')
+        ->where('quiz_mode', 'kurang')
+        ->where('user_id', $user->user_id)
+        ->groupBy('user_id')
+        ->get();
+        $quizKurangSuccesRate = $quizKurangSuccesRate[0]->total  / ($quizKurangSuccesRate[0]->total_quiz * 10) * 100 ;
+        $quizKaliSuccesRate = Quiz::select('user_id')
+        ->selectRaw('SUM(correct_question) as total')
+        ->selectRaw('COUNT(*) as total_quiz')
+        ->where('quiz_mode', 'kali')
+        ->where('user_id', $user->user_id)
+        ->groupBy('user_id')
+        ->get();
+        $quizKaliSuccesRate = $quizKaliSuccesRate[0]->total  / ($quizKaliSuccesRate[0]->total_quiz * 10) * 100 ;
+        $quizBagiSuccesRate = Quiz::select('user_id')
+        ->selectRaw('SUM(correct_question) as total')
+        ->selectRaw('COUNT(*) as total_quiz')
+        ->where('quiz_mode', 'bagi')
+        ->where('user_id', $user->user_id)
+        ->groupBy('user_id')
+        ->get();
+        $quizBagiSuccesRate = $quizBagiSuccesRate[0]->total  / ($quizBagiSuccesRate[0]->total_quiz * 10) * 100 ;
+
+        settype($quizTambahSuccesRate, 'integer');
+        settype($quizKurangSuccesRate, 'integer');
+        settype($quizKaliSuccesRate, 'integer');
+        settype($quizBagiSuccesRate, 'integer');
+
+        return  ['quiz_done'=> $quizDone,
+                'quiz_tambah_success_rate' => $quizTambahSuccesRate,
+                'quiz_kurang_success_rate' => $quizKurangSuccesRate,
+                'quiz_kali_success_rate' => $quizKaliSuccesRate,
+                'quiz_bagi_success_rate' => $quizBagiSuccesRate];
+
+        
     }
 }

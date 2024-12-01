@@ -18,7 +18,6 @@ class QuizController extends Controller
     {
         $rules =[
             'quiz_mode' => 'required|string',
-            'exp_received' => 'required|integer',
             'total_question' => 'required|integer',
             'quiz_time' => 'required|integer',
             'correct_question' => 'required|integer',
@@ -36,7 +35,7 @@ class QuizController extends Controller
         $user = Auth::user();
         $quiz = Quiz::create([
             'quiz_mode' => $request->quiz_mode,
-            'exp_received' => $request->exp_received,
+            'exp_received' => $request->correct_question * 10,
             'total_question' => $request->total_question,
             'quiz_time' => $request->quiz_time,
             'correct_question' => $request->correct_question,
@@ -86,7 +85,7 @@ class QuizController extends Controller
             'success' => true,
             'message' => 'Quiz retrieved successfully.',
             'response_code' => 200,
-            'data' => [$quiz],
+            'data' => $quiz,
         ], 200);
     }
 }
