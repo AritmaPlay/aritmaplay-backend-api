@@ -89,6 +89,7 @@ class UserController extends Controller
     public function getStats($id){
         $user = User::find($id);
         $quizDone = Quiz::where('user_id', $user->user_id)->count();
+
         $quizTambahSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
@@ -96,7 +97,8 @@ class UserController extends Controller
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizTambahSuccesRate = $quizTambahSuccesRate[0]->total  / ($quizTambahSuccesRate[0]->total_quiz * 10) * 100 ;
+        $quizTambahSuccesRate = $this->checkQuizRateEmpty($quizTambahSuccesRate);
+
         $quizKurangSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
@@ -104,7 +106,8 @@ class UserController extends Controller
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizKurangSuccesRate = $quizKurangSuccesRate[0]->total  / ($quizKurangSuccesRate[0]->total_quiz * 10) * 100 ;
+        $quizKurangSuccesRate = $this->checkQuizRateEmpty($quizKurangSuccesRate);
+
         $quizKaliSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
@@ -112,7 +115,8 @@ class UserController extends Controller
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizKaliSuccesRate = $quizKaliSuccesRate[0]->total  / ($quizKaliSuccesRate[0]->total_quiz * 10) * 100 ;
+        $quizKaliSuccesRate = $this->checkQuizRateEmpty($quizKaliSuccesRate);
+
         $quizBagiSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
@@ -120,7 +124,7 @@ class UserController extends Controller
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizBagiSuccesRate = $quizBagiSuccesRate[0]->total  / ($quizBagiSuccesRate[0]->total_quiz * 10) * 100 ;
+        $quizBagiSuccesRate = $this->checkQuizRateEmpty($quizBagiSuccesRate);
 
         settype($quizTambahSuccesRate, 'integer');
         settype($quizKurangSuccesRate, 'integer');
@@ -134,5 +138,16 @@ class UserController extends Controller
                 'quiz_bagi_success_rate' => $quizBagiSuccesRate];
 
         
+    }
+
+    public function checkQuizRateEmpty($quizRate) {
+        if(!empty($quizRate[0])){
+            $quizRate = $quizRate[0]->total  / ($quizRate[0]->total_quiz * 10) * 100 ;
+        }
+        else{
+            $quizRate = 0;
+        }
+
+        return $quizRate;
     }
 }
