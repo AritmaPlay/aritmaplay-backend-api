@@ -85,16 +85,12 @@ class LeaderboardEntryController extends Controller
 
     public function addExpToLeaderboardEntry($exp_received) {
         $user = Auth::user();
-        // 1. Ambil id leaderboard minggu ini (yang aktif)
         $leaderboard_id = Leaderboard::where('status', 'active')->first()->leaderboard_id;
-        // 2. Cari leaderboard entry dengan user_id dan leaderboard_id tersebut
         $leaderboardEntry = LeaderboardEntry::where('user_id', $user->user_id)->where('leaderboard_id', $leaderboard_id)->first();
-        // 3. Jika ada, update ranknya
         if ($leaderboardEntry) {
             $leaderboardEntry->totalExpPerWeek = $leaderboardEntry->totalExpPerWeek + $exp_received;
             $leaderboardEntry->save();
         }
-        // 4. Jika tidak ada, buat leaderboard entry baru
         else {
             LeaderboardEntry::create([
                 'leaderboard_id' => $leaderboard_id,

@@ -19,6 +19,7 @@ class RegisterController extends Controller
             'username' => 'required|string|unique:users',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string',
+            'urlProfile'=>'required|string',
         ]; 
     
         $validator = Validator::make($request->all(), $rules);
@@ -36,6 +37,7 @@ class RegisterController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'urlProfile'=>$request->urlProfile
         ]);
     
         return response()->json([
