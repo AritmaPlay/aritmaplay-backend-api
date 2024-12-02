@@ -31,6 +31,7 @@ Route::resources(['user' => UserController::class], ['middleware' => 'auth:sanct
 
 //quiz
 Route::resource('/quiz', QuizController::class)->middleware('auth:sanctum');
+Route::get('/quiz/user/{id}', [QuizController::class, 'showByUserId'])->middleware('auth:sanctum');
 
 //leaderboard
 Route::resource('/leaderboard', LeaderboardController::class)->middleware('auth:sanctum');
