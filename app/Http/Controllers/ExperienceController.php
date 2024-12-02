@@ -12,7 +12,6 @@ class ExperienceController extends Controller
     public function updateUserExperience($quiz)
     {
         try {
-            // Temukan user berdasarkan user_id pada quiz
             $user = User::find($quiz->user_id);
 
             if (!$user) {
@@ -24,16 +23,13 @@ class ExperienceController extends Controller
                 ], 404);
             }
 
-            // Tambahkan exp_received ke totalExp user
             $user->totalExp = $user->totalExp + $quiz->exp_received;
 
-            // Hitung level berdasarkan exp eksponensial
-            $baseExp = 100; // Exp dasar untuk naik dari Level 1 ke Level 2
-            $multiplier = 1.5; // Faktor pengali eksponensial
-            $currentLevel = 1; // Mulai dari Level 1
-            $expForNextLevel = $baseExp; // Exp yang diperlukan untuk naik level berikutnya
+            $baseExp = 100; 
+            $multiplier = 1.5; 
+            $currentLevel = 1; 
+            $expForNextLevel = $baseExp; 
 
-            // Hitung level user berdasarkan totalExp
             while ($user->totalExp >= $expForNextLevel) {
                 $currentLevel++;
                 $expForNextLevel += $baseExp * pow($multiplier, $currentLevel - 1);
@@ -41,11 +37,8 @@ class ExperienceController extends Controller
 
             $user->level = $currentLevel;
 
-            // Simpan perubahan pada user
             $user->save();
 
-
-            // Panggil fungsi test pada leaderboardEntryController
             $leaderboardEntryController = new LeaderboardEntryController();
             $leaderboardEntryController->addExpToLeaderboardEntry($quiz->exp_received);
             
