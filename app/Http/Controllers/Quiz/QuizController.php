@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Quiz;
 
 use App\Models\Quiz;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -88,4 +89,38 @@ class QuizController extends Controller
             'data' => $quiz,
         ], 200);
     }
+
+    public function showByUserId($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+                'response_code' => 404,
+                'data' => [],
+            ], 404);
+        }
+
+        $quizzes = Quiz::where('user_id', $id)->get();
+
+        if ($quizzes->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No quizzes found for the given user ID.',
+                'response_code' => 404,
+                'data' => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Quizzes retrieved successfully.',
+            'response_code' => 200,
+            'data' => $quizzes,
+        ], 200);
+    
+    }
+
+
 }
