@@ -27,7 +27,7 @@ Route::post('/login', LoginController::class);
 Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
 
 //user
-Route::resources(['user' => UserController::class], ['middleware' => 'auth:sanctum']);
+Route::resource('/user', UserController::class)->middleware('auth:sanctum');
 
 //quiz
 Route::resource('/quiz', QuizController::class)->middleware('auth:sanctum');
