@@ -36,17 +36,17 @@ Route::get('/quiz/user/{id}', [QuizController::class, 'showByUserId'])->middlewa
 //leaderboard
 Route::resource('/leaderboard', LeaderboardController::class)->middleware('auth:sanctum');
 Route::get('/leaderboard-active', [LeaderboardController::class, 'showActiveLeaderboard'])->middleware('auth:sanctum');
+Route::get('/leaderboard-total-exp', [LeaderboardController::class, 'getLeaderboardByTotalExp'])->middleware('auth:sanctum');
+
 
 //leaderboardEntry
 Route::resource('/leaderboard-entry', LeaderboardEntryController::class)->middleware('auth:sanctum');
 
 Route::post('/run-scheduled-task', function () {
-    // Logika atau fungsi yang dijalankan
     app(LeaderboardController::class)->endLeaderboardWeek();
-    //panggil fungsi CreateLeaderboardWeek pada leaderboardcontroller
     app(LeaderboardController::class)->createLeaderboardWeek();
     Log::info('Scheduled task executed successfully.');
 
     return response()->json(['message' => 'Scheduled task executed successfully.']);
-})->middleware(VerifyCloudSchedulerToken::class); // Middleware opsional untuk keamanan
+})->middleware(VerifyCloudSchedulerToken::class); 
 
