@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Leaderboard;
 
 use Exception;
+use App\Models\User;
 use App\Models\Leaderboard;
+use Termwind\Components\Dd;
 use Illuminate\Http\Request;
 use App\Models\LeaderboardEntry;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Termwind\Components\Dd;
 
 class LeaderboardController extends Controller
 {
@@ -121,8 +123,20 @@ class LeaderboardController extends Controller
 
     public function showActiveLeaderboard()
     {
-        $leaderboard = Leaderboard::where('status', 'active')->get()->first();
-        $entries = LeaderboardEntry::where('leaderboard_id', $leaderboard->leaderboard_id)->orderBy('totalExpPerWeek', 'desc')->limit(10)->get();
+        $leaderboard = Leaderboard::with(['leaderboardEntries' => function ($q) {
+            $q->with('user')->orderBy('totalExpPerWeek', 'desc')->limit(10)->get();
+        }])
+        ->firstWhere('status', 'active');
+
+        $userRank = null;
+        $leaderboardEntry = LeaderboardEntry::orderBy('totalExpPerWeek', 'desc')->get();
+        foreach ($leaderboardEntry as $key => $value) {
+            if ($value->user_id == Auth::user()->user_id) {
+                $userRank = $key+1;
+                break;
+            }
+        }
+        $leaderboard->userRank = $userRank;
         
         if (!$leaderboard) {
             return response()->json([
@@ -132,21 +146,12 @@ class LeaderboardController extends Controller
                 'data' => [],
             ], 404);
         }
-        if (!$entries) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Leaderboard entry not found.',
-                'response_code' => 404,
-                'data' => [],
-            ], 404);
-        }
 
         return response()->json([
             'success' => true,
             'message' => 'Leaderboard retrieved successfully.',
             'response_code' => 200,
-            'data' => [['leaderboard'=>[$leaderboard], 
-                        'entries'=>$entries]],
+            'data' => $leaderboard,
         ], 200);
     }
 
@@ -160,10 +165,25 @@ class LeaderboardController extends Controller
         ]);
     }
 
+
     public function endLeaderboardWeek()
     {
         $leaderboard = Leaderboard::where('status', 'active')->first();
         $leaderboard->status = 'inactive';
         $leaderboard->save();
     }
+
+    public function getLeaderboardByTotalExp()
+    {
+        $users = User::orderBy('totalExp', 'desc')->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Leaderboard by total exp retrieved successfully.',
+            'response_code' => 200,
+            'data' =>$users
+        ], 200);
+        
+    }
+
 }
