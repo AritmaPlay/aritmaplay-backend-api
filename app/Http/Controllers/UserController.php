@@ -90,52 +90,52 @@ class UserController extends Controller
         $user = User::find($id);
         $quizDone = Quiz::where('user_id', $user->user_id)->count();
 
-        $quizTambahSuccesRate = Quiz::select('user_id')
+        $quizPenambahanSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
-        ->where('quiz_mode', 'tambah')
+        ->where('quiz_mode', 'Penambahan')
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizTambahSuccesRate = $this->checkQuizRateEmpty($quizTambahSuccesRate);
+        $quizPenambahanSuccesRate = $this->checkQuizRateEmpty($quizPenambahanSuccesRate);
 
-        $quizKurangSuccesRate = Quiz::select('user_id')
+        $quizPenguranganSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
-        ->where('quiz_mode', 'kurang')
+        ->where('quiz_mode', 'Pengurangan')
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizKurangSuccesRate = $this->checkQuizRateEmpty($quizKurangSuccesRate);
+        $quizPenguranganSuccesRate = $this->checkQuizRateEmpty($quizPenguranganSuccesRate);
 
-        $quizKaliSuccesRate = Quiz::select('user_id')
+        $quizPerkalianSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
-        ->where('quiz_mode', 'kali')
+        ->where('quiz_mode', 'Perkalian')
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizKaliSuccesRate = $this->checkQuizRateEmpty($quizKaliSuccesRate);
+        $quizPerkalianSuccesRate = $this->checkQuizRateEmpty($quizPerkalianSuccesRate);
 
-        $quizBagiSuccesRate = Quiz::select('user_id')
+        $quizPembagianSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
-        ->where('quiz_mode', 'bagi')
+        ->where('quiz_mode', 'Pembagian')
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizBagiSuccesRate = $this->checkQuizRateEmpty($quizBagiSuccesRate);
+        $quizPembagianSuccesRate = $this->checkQuizRateEmpty($quizPembagianSuccesRate);
 
-        settype($quizTambahSuccesRate, 'integer');
-        settype($quizKurangSuccesRate, 'integer');
-        settype($quizKaliSuccesRate, 'integer');
-        settype($quizBagiSuccesRate, 'integer');
+        settype($quizPenambahanSuccesRate, 'integer');
+        settype($quizPenguranganSuccesRate, 'integer');
+        settype($quizPerkalianSuccesRate, 'integer');
+        settype($quizPembagianSuccesRate, 'integer');
 
         return  ['quiz_done'=> $quizDone,
-                'quiz_tambah_success_rate' => $quizTambahSuccesRate,
-                'quiz_kurang_success_rate' => $quizKurangSuccesRate,
-                'quiz_kali_success_rate' => $quizKaliSuccesRate,
-                'quiz_bagi_success_rate' => $quizBagiSuccesRate];
+                'quiz_Penambahan_success_rate' => $quizPenambahanSuccesRate,
+                'quiz_Pengurangan_success_rate' => $quizPenguranganSuccesRate,
+                'quiz_Perkalian_success_rate' => $quizPerkalianSuccesRate,
+                'quiz_Pembagian_success_rate' => $quizPembagianSuccesRate];
 
         
     }

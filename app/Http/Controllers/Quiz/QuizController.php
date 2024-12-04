@@ -102,7 +102,10 @@ class QuizController extends Controller
             ], 404);
         }
 
-        $quizzes = Quiz::where('user_id', $id)->get();
+        $quizzes = Quiz::where('user_id', $id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
 
         if ($quizzes->isEmpty()) {
             return response()->json([
