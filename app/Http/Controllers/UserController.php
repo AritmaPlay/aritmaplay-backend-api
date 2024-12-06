@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\LeaderboardEntry;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -28,6 +29,16 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
+
+        $userRank = null;
+        $leaderboardEntry = LeaderboardEntry::orderBy('totalExpPerWeek', 'desc')->get();
+        foreach ($leaderboardEntry as $key => $value) {
+            if ($value->user_id == Auth::user()->user_id) {
+                $userRank = $key+1;
+                break;
+            }
+        }
+        $user->userRank = $userRank;
 
         if (!$user) {
             return response()->json([
@@ -90,14 +101,14 @@ class UserController extends Controller
         $user = User::find($id);
         $quizDone = Quiz::where('user_id', $user->user_id)->count();
 
-        $quizPenambahanSuccesRate = Quiz::select('user_id')
+        $quizPenjumlahanSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
         ->selectRaw('COUNT(*) as total_quiz')
-        ->where('quiz_mode', 'Penambahan')
+        ->where('quiz_mode', 'Penjumlahan')
         ->where('user_id', $user->user_id)
         ->groupBy('user_id')
         ->get();
-        $quizPenambahanSuccesRate = $this->checkQuizRateEmpty($quizPenambahanSuccesRate);
+        $quizPenjumlahanSuccesRate = $this->checkQuizRateEmpty($quizPenjumlahanSuccesRate);
 
         $quizPenguranganSuccesRate = Quiz::select('user_id')
         ->selectRaw('SUM(correct_question) as total')
@@ -126,16 +137,16 @@ class UserController extends Controller
         ->get();
         $quizPembagianSuccesRate = $this->checkQuizRateEmpty($quizPembagianSuccesRate);
 
-        settype($quizPenambahanSuccesRate, 'integer');
+        settype($quizPenjumlahanSuccesRate, 'integer');
         settype($quizPenguranganSuccesRate, 'integer');
         settype($quizPerkalianSuccesRate, 'integer');
         settype($quizPembagianSuccesRate, 'integer');
 
         return  ['quiz_done'=> $quizDone,
-                'quiz_Penambahan_success_rate' => $quizPenambahanSuccesRate,
-                'quiz_Pengurangan_success_rate' => $quizPenguranganSuccesRate,
-                'quiz_Perkalian_success_rate' => $quizPerkalianSuccesRate,
-                'quiz_Pembagian_success_rate' => $quizPembagianSuccesRate];
+                'quiz_penjumlahan_success_rate' => $quizPenjumlahanSuccesRate,
+                'quiz_pengurangan_success_rate' => $quizPenguranganSuccesRate,
+                'quiz_perkalian_success_rate' => $quizPerkalianSuccesRate,
+                'quiz_pembagian_success_rate' => $quizPembagianSuccesRate];
 
         
     }
