@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\Quiz;
 use App\Models\User;
+use App\Models\Leaderboard;
 use Illuminate\Http\Request;
 use App\Models\LeaderboardEntry;
 use Illuminate\Support\Facades\Auth;
@@ -27,11 +28,16 @@ class UserController extends Controller
         ], 200);
     }
     public function show($id)
-    {
+    {   
         $user = User::find($id);
+        $leaderboard = Leaderboard::firstWhere('status', 'active');
 
         $userRank = null;
-        $leaderboardEntry = LeaderboardEntry::orderBy('totalExpPerWeek', 'desc')->get();
+
+        $leaderboardEntry = LeaderboardEntry::where('leaderboard_id', $leaderboard->leaderboard_id)
+            ->orderBy('totalExpPerWeek', 'desc')
+            ->get();
+
         foreach ($leaderboardEntry as $key => $value) {
             if ($value->user_id == Auth::user()->user_id) {
                 $userRank = $key+1;
