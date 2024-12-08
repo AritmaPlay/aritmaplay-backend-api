@@ -129,7 +129,10 @@ class LeaderboardController extends Controller
         ->firstWhere('status', 'active');
 
         $userRank = null;
-        $leaderboardEntry = LeaderboardEntry::orderBy('totalExpPerWeek', 'desc')->get();
+        $leaderboardEntry = LeaderboardEntry::where('leaderboard_id', $leaderboard->leaderboard_id)
+            ->orderBy('totalExpPerWeek', 'desc')
+            ->get();
+
         foreach ($leaderboardEntry as $key => $value) {
             if ($value->user_id == Auth::user()->user_id) {
                 $userRank = $key+1;

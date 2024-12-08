@@ -95,7 +95,7 @@ class LeaderboardEntryController extends Controller
             LeaderboardEntry::create([
                 'leaderboard_id' => $leaderboard_id,
                 'user_id' => $user->user_id,
-                'totalExpPerWeek' => $user->totalExp,
+                'totalExpPerWeek' => $exp_received,
             ]);
     }
 }
