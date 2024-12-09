@@ -39,7 +39,7 @@ class UserController extends Controller
             ->get();
 
         foreach ($leaderboardEntry as $key => $value) {
-            if ($value->user_id == Auth::user()->user_id) {
+            if ($value->user_id == $id) {
                 $userRank = $key+1;
                 break;
             }
