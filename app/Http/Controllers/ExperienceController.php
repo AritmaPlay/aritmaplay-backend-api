@@ -40,7 +40,8 @@ class ExperienceController extends Controller
             $user->save();
 
             $leaderboardEntryController = new LeaderboardEntryController();
-            $leaderboardEntryController->addExpToLeaderboardEntry($quiz->exp_received);
+            $leaderboardEntryController->addExpToLeaderboardEntry($user, $quiz->exp_received);
+
             
             return response()->json([
                 'success' => true,
