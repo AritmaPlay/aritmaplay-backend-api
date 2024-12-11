@@ -83,20 +83,21 @@ class LeaderboardEntryController extends Controller
         ], 200);
     }
 
-    public function addExpToLeaderboardEntry($exp_received) {
-        $user = Auth::user();
+   public function addExpToLeaderboardEntry($user, $exp_received) {
         $leaderboard_id = Leaderboard::where('status', 'active')->first()->leaderboard_id;
-        $leaderboardEntry = LeaderboardEntry::where('user_id', $user->user_id)->where('leaderboard_id', $leaderboard_id)->first();
+        $leaderboardEntry = LeaderboardEntry::where('user_id', $user->user_id)
+                                            ->where('leaderboard_id', $leaderboard_id)
+                                            ->first();
         if ($leaderboardEntry) {
             $leaderboardEntry->totalExpPerWeek = $leaderboardEntry->totalExpPerWeek + $exp_received;
             $leaderboardEntry->save();
-        }
-        else {
+        } else {
             LeaderboardEntry::create([
                 'leaderboard_id' => $leaderboard_id,
                 'user_id' => $user->user_id,
                 'totalExpPerWeek' => $exp_received,
             ]);
-    }
+        }
 }
+
 }
